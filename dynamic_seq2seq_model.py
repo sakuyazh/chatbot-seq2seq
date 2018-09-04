@@ -39,11 +39,13 @@ class DynamicSeq2seq():
                 embedding_size=10,
                 attention=False,
                 debug=False,
-                time_major=False):
+                time_major=False,
+                lr=0.1):
         
         self.debug = debug
         self.attention = attention
         self.lstm_dims = 40
+        self.learning_rate = lr
 
         self.encoder_vocab_size = encoder_vocab_size
         self.decoder_vocab_size = decoder_vocab_size
@@ -216,8 +218,8 @@ class DynamicSeq2seq():
                         gradients, self.max_gradient_norm)
 
         # Optimization
-        # optimizer = tf.train.GradientDescentOptimizer(0.1)
-        optimizer = tf.train.AdamOptimizer(0.07)
+        # optimizer = tf.train.GradientDescentOptimizer(self.learning_rate)
+        optimizer = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op = optimizer.apply_gradients(zip(clipped_gradients, params))
         self.saver = tf.train.Saver(tf.global_variables())
 

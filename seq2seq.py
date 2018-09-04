@@ -32,9 +32,10 @@ class Seq2seq():
 
     '''
 
-    def __init__(self):
+    def __init__(self, lr=None):
         print("tensorflow version: ", tf.__version__)
-
+        if not lr:
+            lr = 0.1
         self.dict_file = 'data/word_dict.txt'
         self.data_map = "data/map.pkl"
 
@@ -73,6 +74,7 @@ class Seq2seq():
         self.model = DynamicSeq2seq(
             encoder_vocab_size=self.encoder_vocab_size + 1,
             decoder_vocab_size=self.decoder_vocab_size + 1,
+            lr=lr
         )
         self.sess = tf.Session()
         self.restore_model()
@@ -164,8 +166,16 @@ if __name__ == '__main__':
         if sys.argv[1] == 'retrain':
             clear()
             sys.argv[1] = "train"
-        seq = Seq2seq()
+        lr = None
+        if sys.argv[2]:
+            lr = float(sys.argv[2])
+        print(lr)
+        seq = Seq2seq(lr)
         if sys.argv[1] == 'train':
             seq.train()
         elif sys.argv[1] == 'infer':
-            print(seq.predict("呵呵"))
+            while True:
+                w = input("说吧：")
+                if w == "exit":
+                    exit(0)
+                seq.predict(w)
